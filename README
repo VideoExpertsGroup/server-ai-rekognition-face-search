@@ -1,0 +1,23 @@
+Plugin (or adapter) for VXG Server to perform face recognition using AWS Rekognition service.
+Copyright (c) 2019 VXG
+
+Smart camera sends an event with image to VXG Server when it detects that probably there's some face on the image.
+This module gets these events along with images and send them to AWS Rekognition to find a known faces there.
+If there's no known faces, it adds new faces to collection at AWS Rekognition to recognise them in the future.
+Face identifiers (UUIDs) and rectangles are sent back to the VXG Server allowing users to process this meta, for example
+ search the particular face in the VXG Server' storage.
+
+The Big picture:
+                              |               This module             |
+                              |                                       | <=> AWS Rekognition
+Smart camera => VXG Server <= | PollingImageSource => Queue => Worker |
+                              |                                       | => VXG Server
+
+PollingImageSource periodically polls VXG Server for images that cameras marked as having some face. It gets storage
+URL to the images and passes them to processing Queue. Those events are marked with "processing" meta tag.
+Worker gets image URLs from the Queue and starts it's processing:
+ 1) downloads image from the storage;
+ 2) sends "search_faces_by_image" request to AWS Rekognition, get face UUID if someone familiar is found
+ 3) if no known faces is found, but there's a faces, call "index_faces" to add faces to Collection, get their UUIDs
+ 4) set metadata with face UUID and rectangle to this event, also set meta tag "processed_has_face"
+ 5) if no faces found set meta tag "processed_no_face"
