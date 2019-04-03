@@ -10,10 +10,11 @@ class VXGClient:
     TAG_HAS_FACE = 'rek_face_search_processed_has_face'
     TAG_NO_FACE = 'rek_face_search_processed_no_face'
     TAG_FACE_FMT = 'rek_face_search_faceid_%s'
+    TAG_ERROR = 'rek_face_search_error'
 
     ENDPOINTS = {
-        'get_events_unprocessed': 'v2/storage/events/?type=facedetection&meta_not=%s,%s,%s&limit=%%(limit)d' % (
-            TAG_PROCESSING, TAG_HAS_FACE, TAG_NO_FACE),
+        'get_events_unprocessed': 'v2/storage/events/?type=facedetection&meta_not=%s,%s,%s,%s&limit=%%(limit)d' % (
+            TAG_PROCESSING, TAG_HAS_FACE, TAG_NO_FACE, TAG_ERROR),
         'get_event_details': 'v2/storage/events/%(id)d/?include_meta=true',
         'event_processing': 'v2/storage/events/%%(id)d/meta/%s/' % TAG_PROCESSING,
         'event_processed_has_face': 'v2/storage/events/%%(id)d/meta/%s/' % TAG_HAS_FACE,
@@ -76,6 +77,17 @@ class VXGClient:
             resp = requests.post(self._get_url('event_meta', id=event_id), headers=self._auth,
                                  json={'data': '', 'tag': self.TAG_NO_FACE})
             resp.raise_for_status()
+
+    def set_event_processed_error(self, event_id: int, message: str):
+        """
+        Set "processed_with_error" tag
+        :param event_id: event ID from VXG Server
+        :param message: short description what were wrong
+        :return:
+        """
+        resp = requests.post(self._get_url('event_meta', id=event_id), headers=self._auth,
+                             json={'data': message, 'tag': self.TAG_ERROR})
+        resp.raise_for_status()
 
     def get_event_details(self, event_id: int) -> dict:
         """

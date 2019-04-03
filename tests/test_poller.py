@@ -25,6 +25,9 @@ class MockVXGClient(VXGClient):
         sleep(self.delay)
         self.events[event_id].update({'meta': {VXGClient.TAG_PROCESSING: ''}})
 
+    def set_event_processed_error(self, event_id: int, message: str):
+        self.events[event_id].update({'meta': {VXGClient.TAG_ERROR: message}})
+
 
 def generate_events(count: int) -> dict:
     """
@@ -97,6 +100,20 @@ class TestPollingImageSourcePollEvents(TestCase):
         self.assertEqual(PollingImageSource.MAX_EVENT_BATCH, self.queue.qsize())
         self.validate_queue_content()
 
+    def test_poll_events_no_thumbnail(self):
+        self.vxg_client.events = generate_events(4)
+        self.vxg_client.events[0].pop('thumb')
+        self.vxg_client.events[1]['thumb'] = {}
+        self.vxg_client.events[2]['thumb'].pop('url')
+        self.vxg_client.events[3]['thumb']['url'] = ''
+        more = self.src.poll_events()
+        self.assertFalse(more)
+        self.assertEqual(self.queue.qsize(), 0)
+        for event in self.vxg_client.events.values():
+            self.assertIn('meta', event)
+            self.assertIn(VXGClient.TAG_ERROR, event['meta'])
+            self.assertEqual(event['meta'][VXGClient.TAG_ERROR], 'no_image')
+
     def validate_queue_content(self):
         item = self.queue.get_nowait()
         try:
@@ -124,3 +141,4 @@ class TestPollingImageSourceRoutine(TestCase):
         self.thread.join(timeout=1.1)
 
     # TODO: test various interruption scenarios, ie in the middle of server requests, awaiting while queue will be freed
+    # TODO: test VXG Server connectivity issues

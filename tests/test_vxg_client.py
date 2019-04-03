@@ -79,3 +79,5 @@ class TestVXGClientIntegration(TestCase):
             self.vxg.clear_event_processed(event_id, [])
             event_after_clear = self.vxg.get_event_details(event_id)
             self.assertNotIn(self.vxg.TAG_NO_FACE, event_after_clear.get('meta', {}))
+
+    # TODO: test set_event_processed_error

@@ -44,19 +44,24 @@ class PollingImageSource:
         :return: Is there more events at the server
         """
         # TODO: first run should grab all unprocessed events too
+        # TODO: try to switch to remembering last event ID, not by relying to "processing" tag
         events, more = self.get_events()
         for event in events:
-            while True:
-                try:
-                    self.queue.put({
-                        'id': event['id'],
-                        'url': event['thumb']['url'],
-                    }, timeout=1)
-                    break
-                except Full:
-                    if self.NEED_STOP.is_set():
-                        raise StopIteration()
-            self.vxg_client.set_event_processing(event['id'])
+            url = event.get('thumb', {}).get('url', None)
+            if not url:
+                self.vxg_client.set_event_processed_error(event['id'], 'no_image')
+            else:
+                while True:
+                    try:
+                        self.queue.put({
+                            'id': event['id'],
+                            'url': url,
+                        }, timeout=1)
+                        break
+                    except Full:
+                        if self.NEED_STOP.is_set():
+                            raise StopIteration()
+                self.vxg_client.set_event_processing(event['id'])
 
         return more
 

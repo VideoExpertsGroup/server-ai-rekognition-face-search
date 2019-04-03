@@ -57,3 +57,7 @@ class TestWorkerProcessIntegration(TestCase):
         self.worker.queue.put_nowait({'id': 0, 'url': 'https://upload.wikimedia.org/wikipedia/commons/3/33/Jeff_Bezos_2016.jpg'})
         self.worker.process()
         self.assertIn(0, self.vxg.events)
+
+    # TODO: test image unavailable issue (connectivity or 404)
+    # TODO: test AWS connectivity issues
+    # TODO: test VXG Server connectivity issue
