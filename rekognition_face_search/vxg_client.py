@@ -70,8 +70,9 @@ class VXGClient:
                                  json={'data': '', 'tag': self.TAG_HAS_FACE})
             resp.raise_for_status()
             for face in faces:
+                face_id = face.pop('FaceId')
                 resp = requests.post(self._get_url('event_meta', id=event_id), headers=self._auth,
-                                     json={'data': json.dumps(face), 'tag': self.TAG_FACE_FMT % face['FaceId']})
+                                     json={'data': json.dumps(face), 'tag': self.TAG_FACE_FMT % face_id})
                 resp.raise_for_status()
         else:
             resp = requests.post(self._get_url('event_meta', id=event_id), headers=self._auth,
