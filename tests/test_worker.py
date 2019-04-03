@@ -8,7 +8,7 @@ from rekognition_face_search.worker import Worker
 
 
 AWS_TEST_CREDENTIALS = {
-    'collection_id': os.environ.get('COLLECTION_ID'),
+    'collection_id': (os.environ.get('COLLECTION_ID') + '_test') if os.environ.get('COLLECTION_ID') else None,
     'access_key': os.environ.get('ACCESS_KEY'),
     'secret_key': os.environ.get('SECRET_KEY'),
 }
