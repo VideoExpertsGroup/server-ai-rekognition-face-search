@@ -35,7 +35,7 @@ class Application:
         for worker_thread in self.worker_threads:
             worker_thread.start()
         # This one runs forever
-        print('Polling "%s" and use AWS Rekognition collection "%s"')
+        print('Polling "%s" and use AWS Rekognition collection "%s"' % (self.server_uri, self.rek_coll_id))
         self.source.routine()
         print('Exit')
 
