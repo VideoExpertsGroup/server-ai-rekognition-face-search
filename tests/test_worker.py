@@ -58,6 +58,6 @@ class TestWorkerProcessIntegration(TestCase):
         self.worker.process()
         self.assertIn(0, self.vxg.events)
 
-    # TODO: test image unavailable issue (connectivity or 404)
+    # TODO: test image unavailable issue (connectivity or 404), postpone image processing for 1 minute
     # TODO: test AWS connectivity issues
     # TODO: test VXG Server connectivity issue

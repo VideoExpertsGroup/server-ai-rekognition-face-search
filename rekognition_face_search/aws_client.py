@@ -10,6 +10,7 @@ class AWSClient:
     def __init__(self, collection_id: str, access_key: str, secret_key: str):
         self.collection_id = collection_id
         self.rek = boto3.client('rekognition',
+                                region_name='us-east-1',
                                 aws_access_key_id=access_key,
                                 aws_secret_access_key=secret_key)
 
