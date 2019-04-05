@@ -1,4 +1,4 @@
-from queue import Queue, Empty, Full
+from queue import Queue, Empty
 from threading import Event
 from time import sleep
 import traceback
@@ -20,15 +20,17 @@ class Worker:
     """
     QUEUE_TIMEOUT = 1
 
-    NEED_STOP = Event()
-
     def __init__(self, queue: Queue, aws_client: AWSClient, vxg_client: VXGClient):
         self.queue = queue
         self.aws = aws_client
         self.vxg = vxg_client
+        self.need_stop = Event()
+
+    def stop(self):
+        self.need_stop.set()
 
     def routine(self):
-        while not self.NEED_STOP.wait(timeout=0.01):
+        while not self.need_stop.wait(timeout=0.01):
             try:
                 try:
                     self.process()

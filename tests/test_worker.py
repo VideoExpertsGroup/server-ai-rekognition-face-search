@@ -21,6 +21,9 @@ class MockVXGClient(VXGClient):
     def set_event_processed(self, event_id: int, faces: list):
         self.events[event_id] = faces
 
+    def clear_event_processing(self, event_id: int):
+        pass
+
 
 class MockAWSClient(AWSClient):
     def __init__(self):

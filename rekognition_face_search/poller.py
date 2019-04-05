@@ -1,4 +1,4 @@
-from threading import Thread, Event
+from threading import Event
 from time import sleep
 from queue import Queue, Full
 import traceback
@@ -15,18 +15,20 @@ class PollingImageSource:
     MAX_EVENT_BATCH = 20
     POLL_INTERVAL = 0.5
 
-    NEED_STOP = Event()
-
     def __init__(self, vxg_client: VXGClient, queue: Queue):
         self.vxg_client = vxg_client
         self.queue = queue
+        self.need_stop = Event()
+
+    def stop(self):
+        self.need_stop.set()
 
     def routine(self):
         """
         Main routine
         """
         timeout = self.POLL_INTERVAL
-        while not self.NEED_STOP.wait(timeout=timeout):
+        while not self.need_stop.wait(timeout=timeout):
             try:
                 try:
                     more = self.poll_events()
@@ -51,6 +53,7 @@ class PollingImageSource:
             if not url:
                 self.vxg_client.set_event_processed_error(event['id'], 'no_image')
             else:
+                self.vxg_client.set_event_processing(event['id'])
                 while True:
                     try:
                         self.queue.put({
@@ -59,10 +62,8 @@ class PollingImageSource:
                         }, timeout=1)
                         break
                     except Full:
-                        if self.NEED_STOP.is_set():
+                        if self.need_stop.is_set():
                             raise StopIteration()
-                self.vxg_client.set_event_processing(event['id'])
-
         return more
 
     def get_events(self) -> (list, bool):

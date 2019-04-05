@@ -1,4 +1,3 @@
-import os
 import signal
 
 from rekognition_face_search.app import Application
@@ -15,16 +14,7 @@ def signal_handler(sig, frame):
 
 if __name__ == '__main__':
     # Init application
-    try:
-        application = Application(server_uri=os.environ['SERVER_URI'],
-                                  vxg_token=os.environ['TOKEN'],
-                                  rekognition_collection_id=os.environ['COLLECTION_ID'],
-                                  aws_access_key=os.environ['ACCESS_KEY'],
-                                  aws_secret_key=os.environ['SECRET_KEY'])
-    except KeyError as ex:
-        print('Missing env variable %s, for now setting environment variables is the only way to configure this '
-              'service' % ex)
-        exit(1)
+    application = Application()
     # Init signals handler
     signal.signal(signal.SIGTERM, signal_handler)
     signal.signal(signal.SIGINT, signal_handler)

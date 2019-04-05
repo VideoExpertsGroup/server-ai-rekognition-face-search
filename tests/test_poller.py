@@ -136,7 +136,7 @@ class TestPollingImageSourceRoutine(TestCase):
         self.thread.start()
         sleep(0.6)
         self.assertTrue(self.thread.is_alive())
-        self.src.NEED_STOP.set()
+        self.src.stop()
         sleep(0)  # Just give a tick to a thread
         self.thread.join(timeout=1.1)
 

@@ -4,6 +4,10 @@ from urllib.parse import urlencode
 import requests
 
 
+class VXGClientBadConfig(Exception):
+    pass
+
+
 class VXGClient:
     """
     Wrapper for VXG Server Web API.
@@ -26,6 +30,9 @@ class VXGClient:
     def __init__(self, server_uri: str, token: str):
         self.server_uri = server_uri
         self.token = token
+
+        if not all((self.server_uri, self.token)):
+            raise VXGClientBadConfig()
 
     def _get_url(self, typ: str, params: dict = None, query: list = None) -> str:
         if not params:
