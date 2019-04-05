@@ -17,7 +17,7 @@ if __name__ == '__main__':
     # Init application
     try:
         application = Application(server_uri=os.environ['SERVER_URI'],
-                                  license_key=os.environ['LICENSE_KEY'],
+                                  vxg_token=os.environ['TOKEN'],
                                   rekognition_collection_id=os.environ['COLLECTION_ID'],
                                   aws_access_key=os.environ['ACCESS_KEY'],
                                   aws_secret_key=os.environ['SECRET_KEY'])

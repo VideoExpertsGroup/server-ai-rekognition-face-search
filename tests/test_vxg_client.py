@@ -1,6 +1,5 @@
 import os
 from random import random
-from time import sleep
 from unittest import TestCase, skipUnless
 from uuid import uuid4
 
@@ -8,7 +7,7 @@ from rekognition_face_search.vxg_client import VXGClient
 
 VXG_TEST_CREDENTIALS = {
     'server_uri': os.environ.get('SERVER_URI'),
-    'license_key': os.environ.get('LICENSE_KEY')
+    'token': os.environ.get('TOKEN')
 }
 
 
@@ -25,7 +24,7 @@ def generate_sample_faces(count: int) -> list:
 
 
 @skipUnless(all((VXG_TEST_CREDENTIALS['server_uri'],
-                 VXG_TEST_CREDENTIALS['license_key'])),
+                 VXG_TEST_CREDENTIALS['token'])),
             'Valid credentials from environment variables are required to run integration tests')
 class TestVXGClientIntegration(TestCase):
     @classmethod

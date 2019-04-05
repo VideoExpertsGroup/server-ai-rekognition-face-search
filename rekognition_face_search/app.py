@@ -13,18 +13,18 @@ WORKERS_GRACE_STOP_TIMEOUT = 5
 
 class Application:
     def __init__(self, server_uri: str,
-                 license_key: str,
+                 vxg_token: str,
                  rekognition_collection_id: str,
                  aws_access_key: str,
                  aws_secret_key: str):
         self.server_uri = server_uri
         self.rek_coll_id = rekognition_collection_id
         self.queue = Queue(maxsize=QUEUE_MAX_SIZE)
-        self.source = PollingImageSource(VXGClient(server_uri=self.server_uri, license_key=license_key), self.queue)
+        self.source = PollingImageSource(VXGClient(server_uri=self.server_uri, token=vxg_token), self.queue)
         self.workers = [
             Worker(self.queue,
                    AWSClient(collection_id=self.rek_coll_id, access_key=aws_access_key, secret_key=aws_secret_key),
-                   VXGClient(server_uri=self.server_uri, license_key=license_key))
+                   VXGClient(server_uri=self.server_uri, token=vxg_token))
             for _ in range(WORKERS_COUNT)
         ]
         self.worker_threads = [Thread(name='Worker %d' % idx, target=self.workers[idx].routine)
