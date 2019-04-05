@@ -53,6 +53,7 @@ class TestWorkerProcessIntegration(TestCase):
         super(TestWorkerProcessIntegration, self).setUp()
         self.queue = Queue()
         self.aws = AWSClient(**AWS_TEST_CREDENTIALS)
+        self.aws.ensure_collection_exist()
         self.vxg = MockVXGClient()
         self.worker = Worker(self.queue, self.aws, self.vxg)
 

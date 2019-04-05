@@ -55,6 +55,8 @@ class Application:
                   'vars or use web config page')
 
         try:
+            aws = AWSClient(collection_id=self.collection, access_key=self.access_key, secret_key=self.secret_key)
+            aws.ensure_collection_exist()
             self.workers = [
                 Worker(self.queue,
                        AWSClient(collection_id=self.collection, access_key=self.access_key, secret_key=self.secret_key),

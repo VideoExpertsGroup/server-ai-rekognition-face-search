@@ -21,15 +21,15 @@ class AWSClient:
                                 aws_access_key_id=access_key,
                                 aws_secret_access_key=secret_key)
 
-        # ensure collection exists
+    def create_collection(self):
+        return self.rek.create_collection(CollectionId=self.collection_id)
+
+    def ensure_collection_exist(self):
         try:
             self.create_collection()
         except ClientError as ex:
             if ex.response['Error']['Code'] != 'ResourceAlreadyExistsException':
                 raise
-
-    def create_collection(self):
-        return self.rek.create_collection(CollectionId=self.collection_id)
 
     def delete_collection(self):
         return self.rek.delete_collection(CollectionId=self.collection_id)
