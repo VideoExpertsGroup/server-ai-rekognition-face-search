@@ -59,7 +59,8 @@ class Application:
             aws.ensure_collection_exist()
             self.workers = [
                 Worker(self.queue,
-                       AWSClient(collection_id=self.collection, access_key=self.access_key, secret_key=self.secret_key),
+                       AWSClient(collection_id=self.collection, access_key=self.access_key, secret_key=self.secret_key,
+                                 threshold=os.environ.get('THRESHOLD', 0.85)),
                        VXGClient(server_uri=self.server_uri, token=self.token))
                 for _ in range(WORKERS_COUNT)
             ]

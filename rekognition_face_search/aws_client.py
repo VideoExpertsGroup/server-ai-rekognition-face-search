@@ -11,8 +11,9 @@ class AWSClient:
     AWS Rekognition client.
     Just wraps some boto3 requests.
     """
-    def __init__(self, collection_id: str, access_key: str, secret_key: str):
+    def __init__(self, collection_id: str, access_key: str, secret_key: str, threshold: float = 0.85):
         self.collection_id = collection_id
+        self.threshold = threshold
         if not all((self.collection_id, access_key, secret_key)):
             raise AWSClientBadConfig()
 
@@ -38,7 +39,7 @@ class AWSClient:
         return self.rek.search_faces_by_image(
             CollectionId=self.collection_id,
             Image={'Bytes': image},
-            FaceMatchThreshold=0.7
+            FaceMatchThreshold=self.threshold
         )
 
     def index_faces(self, image):
