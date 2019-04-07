@@ -11,7 +11,7 @@ class AWSClient:
     AWS Rekognition client.
     Just wraps some boto3 requests.
     """
-    def __init__(self, collection_id: str, access_key: str, secret_key: str, threshold: float = 0.85):
+    def __init__(self, collection_id: str, access_key: str, secret_key: str, threshold: float = 0.8):
         self.collection_id = collection_id
         self.threshold = threshold
         if not all((self.collection_id, access_key, secret_key)):

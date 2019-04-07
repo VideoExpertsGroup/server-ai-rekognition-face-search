@@ -60,7 +60,7 @@ class Application:
             self.workers = [
                 Worker(self.queue,
                        AWSClient(collection_id=self.collection, access_key=self.access_key, secret_key=self.secret_key,
-                                 threshold=os.environ.get('THRESHOLD', 0.85)),
+                                 threshold=float(os.environ.get('THRESHOLD', 0.8))),
                        VXGClient(server_uri=self.server_uri, token=self.token))
                 for _ in range(WORKERS_COUNT)
             ]
